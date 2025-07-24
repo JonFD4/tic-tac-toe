@@ -12,7 +12,16 @@ def get_symbol(cell):
     else:
         return ' '
 
+print(get_symbol(1))
+print(get_symbol(-1))
+print(get_symbol(0))
+
 # print board
 def print_board(board):
     for row_index, row in enumerate(board):
-        row_symbols = [get_symbol(cell) for cell in row]
+        row_symbol = [get_symbol(cell) for cell in row]
+        print('  ' + ' | '.join(row_symbol))
+        if row_index < 2:
+            print("----+---+----")
+
+print_board(board)
