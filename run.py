@@ -44,21 +44,46 @@ def get_player_move(player, board):
     
 # check for wins row, column and diagonals
 
-def check_winner():
+def check_winner(board):
+    # check row wins
     for row in board:
         row_sum = np.sum(row)
         if row_sum == 3:
-            return 'Player X wins this game'
-        elif row_dsum == -3:
-            return 'Player O wins this game'
-    
+            return 1
+        elif row_sum == -3:
+            return -1
+    # check column wins
     for col in board:
         col_sum = np.sum(col)
-        if row_sum == 3:
-            return 'Player X wins this game'
-        elif row_dsum == -3:
-            return 'Player O wins this game'
-        
+        if col_sum == 3:
+            return 1
+        elif col_sum == -3:
+            return -1
+    
+    #check main diagonal wins
+    # top-left to right-bottom
+    main_diag_sum = np.trace(board)
+    if main_diag_sum = 3:
+        return 1
+    elif main_diag_sum = -3:
+        return -1
+
+    #check main diagonal wins
+    # top-left to right-bottom
+    main_diag_sum = np.trace(board)
+    if main_diag_sum = 3:
+        return 1
+    elif main_diag_sum = -3:
+        return -1
+
+    # top-right to bottom-left
+    anti_diag_sum = np.trace(np.flipr(board))
+    if anti_diag_sum = 3:
+        return 1
+    elif anti_diag_sum = -3:
+        return -1
+
+
 def play_game():
     board = np.zeros((3,3), dtype = int)
     current_player = 1
@@ -69,7 +94,8 @@ def play_game():
 
         print_board(board)
         # check for wins
-   
+        result = check_winner(board)
+    
         current_player = -current_player
         break
 
