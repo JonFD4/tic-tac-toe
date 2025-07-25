@@ -26,7 +26,7 @@ def get_player_move(player, board):
         try:
             row= int(input('Enter row(0,1,2): '))
             col= int(input('Enter column(0,1,2): '))
-        except valueError:
+        except ValueError:
             print('Please, enter numbers only.')
             continue
         
@@ -59,44 +59,51 @@ def check_winner(board):
             return 1
         elif col_sum == -3:
             return -1
-    
-    #check main diagonal wins
-    # top-left to right-bottom
-    main_diag_sum = np.trace(board)
-    if main_diag_sum = 3:
-        return 1
-    elif main_diag_sum = -3:
-        return -1
+
 
     #check main diagonal wins
     # top-left to right-bottom
     main_diag_sum = np.trace(board)
-    if main_diag_sum = 3:
+    if main_diag_sum == 3:
         return 1
-    elif main_diag_sum = -3:
+    elif main_diag_sum == -3:
         return -1
 
     # top-right to bottom-left
-    anti_diag_sum = np.trace(np.flipr(board))
-    if anti_diag_sum = 3:
+    anti_diag_sum = np.trace(np.fliplr(board))
+    if anti_diag_sum == 3:
         return 1
-    elif anti_diag_sum = -3:
+    elif anti_diag_sum == -3:
         return -1
 
+    # check for draws
+    if 0 not in board:
+        return 'draw'
+
+    return None
 
 def play_game():
     board = np.zeros((3,3), dtype = int)
     current_player = 1
 
     while True:
-        print_board(board)
+        
         get_player_move(current_player, board)
-
+        current_player = -current_player
         print_board(board)
+
+    
         # check for wins
         result = check_winner(board)
-    
-        current_player = -current_player
-        break
+        if result == 1:
+            print('Player X has won this game')
+            break
+        elif result == -1:
+            print('Player O has won this game')
+            break
+        elif result == 'draw':
+            print('It is a draw')
+            break
 
+        
 play_game()
