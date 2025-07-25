@@ -1,13 +1,9 @@
 import numpy as np
-
-
-
-
 # helper function that Convert numbers to symbols
-def get_symbol(cell):
-    if cell == 1:
+def get_symbol(value):
+    if value == 1:
         return 'X'
-    elif cell == -1:
+    elif value == -1:
         return 'O'
     else:
         return ' '
@@ -46,8 +42,23 @@ def get_player_move(player, board):
 
         break
     
+# check for wins row, column and diagonals
 
-
+def check_winner():
+    for row in board:
+        row_sum = np.sum(row)
+        if row_sum == 3:
+            return 'Player X wins this game'
+        elif row_dsum == -3:
+            return 'Player O wins this game'
+    
+    for col in board:
+        col_sum = np.sum(col)
+        if row_sum == 3:
+            return 'Player X wins this game'
+        elif row_dsum == -3:
+            return 'Player O wins this game'
+        
 def play_game():
     board = np.zeros((3,3), dtype = int)
     current_player = 1
@@ -57,6 +68,8 @@ def play_game():
         get_player_move(current_player, board)
 
         print_board(board)
+        # check for wins
+   
         current_player = -current_player
         break
 
