@@ -1,4 +1,5 @@
 import numpy as np
+import random
 # helper function that Convert numbers to symbols
 def get_symbol(value):
     if value == 1:
@@ -42,6 +43,17 @@ def get_player_move(player, board):
 
         break
     
+def get_empty_cells(board):
+    empty_cells = []
+    for row in range(3):
+        for col in range(3):
+            if board(row,col)== 0:
+                empty_cells.append((row,col))
+    return empty_cells
+
+def get_computer_moves(board):
+    empty_cells = get_empty_cells(board)
+
 # check for wins row, column and diagonals
 
 def check_winner(board):
@@ -89,6 +101,7 @@ def play_game():
     while True:
         
         get_player_move(current_player, board)
+        get_computer_move(currenT_player, board)
         current_player = -current_player
         print_board(board)
 
