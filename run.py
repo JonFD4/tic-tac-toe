@@ -42,7 +42,8 @@ def get_player_move(player, board):
         print(f"Player {get_symbol(player)} placed at ({row}, {col})")
 
         break
-    
+
+ # Evaluate empty cells   
 def get_empty_cells(board):
     empty_cells = []
     for row in range(3):
@@ -51,8 +52,9 @@ def get_empty_cells(board):
                 empty_cells.append((row,col))
     return empty_cells
 
-def get_computer_moves(board):
+def get_computer_moves(board,difficulty):
     empty_cells = get_empty_cells(board)
+
 
 # check for wins row, column and diagonals
 
@@ -93,6 +95,32 @@ def check_winner(board):
         return 'draw'
 
     return None
+
+
+def setup_game():
+    mode = input('Who would you like to play against?\n1. Human\n2. Computer\n>')
+    if mode == '1':
+        opponent_type = 'human'
+        difficulty = None
+    elif mode == 2:
+        opponent_type = 'computer'
+        difficulty_choice =input('Choose the level of computer difficulty:\n1. Easy\n2. Medium\n3. Hard\n>')
+        if difficulty_choice == '1':
+            difficulty = 'easy'
+        elif difficulty_choice == '2':
+            difficulty = 'medium'
+        elif difficulty_choice == '3':
+            difficulty = 'hard'
+        else:
+            print("Invalid input. Defaulting to easy.")
+            difficulty = 'easy'
+    else:
+        print("Invalid input. Defaulting to human.")
+        opponent_type = 'human'
+        difficulty = None
+
+    return opponent_type, difficulty, 
+
 
 def play_game():
     board = np.zeros((3,3), dtype = int)
