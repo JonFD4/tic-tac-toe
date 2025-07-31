@@ -14,9 +14,9 @@ def get_symbol(value):
 def print_board(board):
     for row_index, row in enumerate(board):
         row_symbol = [get_symbol(cell) for cell in row]
-        print('  ' + ' | '.join(row_symbol))
+        print(' | '.join(row_symbol))
         if row_index < 2:
-            print("----+---+----")
+            print("----+-----+----")
 
 
 
