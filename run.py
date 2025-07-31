@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import time
 # helper function that Convert numbers to symbols
 def get_symbol(value):
     if value == 1:
@@ -39,8 +40,6 @@ def get_player_move(player, board):
             continue
         print(f"Player {get_symbol(player)} placed at ({row}, {col})")
         board[row,col]=player
-        
-
         break
 
  # Evaluate empty cells   
@@ -57,6 +56,7 @@ def get_computer_moves(board,difficulty):
     if difficulty == 'easy':
         row,col = random.choice(empty_cells)
         board[row,col]= -1
+        print(f"Computer (Easy) placed O at ({row}, {col})")
         return
 
     elif difficulty == 'medium':
@@ -66,6 +66,7 @@ def get_computer_moves(board,difficulty):
             dp_board[row,col] = -1
             if check_winner(dp_board) == -1:
                 board[row,col] = -1
+                print(f"Computer placed O at ({row}, {col})")
                 return 
         #Try to block
         for row,col in empty_cells:
@@ -73,13 +74,15 @@ def get_computer_moves(board,difficulty):
                 dp_board[row,col] = 1
                 if check_winner(dp_board) == 1:
                     board[row,col] = -1
+                    print(f"Computer placed O at ({row}, {col})")
                     return 
        
         #Fall back
         row, col = random.choice(empty_cells)
         board[row,col]= -1
+        print(f"Computer placed O at ({row}, {col})")
         return
-
+    
 
 
 # check for wins row, column and diagonals
@@ -93,7 +96,7 @@ def check_winner(board):
         elif row_sum == -3:
             return -1
     # check column wins
-    for col in board:
+    for col in board.T:
         col_sum = np.sum(col)
         if col_sum == 3:
             return 1
@@ -145,7 +148,7 @@ def setup_game():
         opponent_type = 'human'
         difficulty = None
 
-    return opponent_type, difficulty, 
+    return opponent_type, difficulty 
 
 
 def play_game(opponent_type,difficulty):
@@ -153,19 +156,25 @@ def play_game(opponent_type,difficulty):
     current_player = 1
 
     while True:
-        print_board(board)
+        
         if opponent_type == 'computer' and current_player == -1:
+            print("Computer is thinking ...")
+            time.sleep(3)
             get_computer_moves(board, difficulty)
         else:
             get_player_move(current_player, board)
     
         # check for wins
         result = check_winner(board)
+        print_board(board)
         if result == 1:
             print('Player X has won this game')
             break
         elif result == -1:
-            print('Player O has won this game')
+            if opponent_type == 'computer':
+                print('Computer has won this game')
+            else:
+                print('Player O has won this game')
             break
         elif result == 'draw':
             print('It is a draw')
