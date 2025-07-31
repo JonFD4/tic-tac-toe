@@ -3,11 +3,11 @@ import random
 # helper function that Convert numbers to symbols
 def get_symbol(value):
     if value == 1:
-        return 'X'
+        return ' X '
     elif value == -1:
-        return 'O'
+        return ' O '
     else:
-        return ' '
+        return '   '
 
 
 # print board
@@ -37,9 +37,9 @@ def get_player_move(player, board):
         if board[row,col]!=0:
             print('That spot is taken. Try another')
             continue
-
-        board[row,col]=player
         print(f"Player {get_symbol(player)} placed at ({row}, {col})")
+        board[row,col]=player
+        
 
         break
 
@@ -48,12 +48,38 @@ def get_empty_cells(board):
     empty_cells = []
     for row in range(3):
         for col in range(3):
-            if board(row,col)== 0:
+            if board[row,col]== 0:
                 empty_cells.append((row,col))
     return empty_cells
 
 def get_computer_moves(board,difficulty):
     empty_cells = get_empty_cells(board)
+    if difficulty == 'easy':
+        row,col = random.choice(empty_cells)
+        board[row,col]= -1
+        return
+
+    elif difficulty == 'medium':
+        # Try to win
+        for row,col in empty_cells:
+            dp_board = board.copy() 
+            dp_board[row,col] = -1
+            if check_winner(dp_board) == -1:
+                board[row,col] = -1
+                return 
+        #Try to block
+        for row,col in empty_cells:
+                dp_board = board.copy() 
+                dp_board[row,col] = 1
+                if check_winner(dp_board) == 1:
+                    board[row,col] = -1
+                    return 
+       
+        #Fall back
+        row, col = random.choice(empty_cells)
+        board[row,col]= -1
+        return
+
 
 
 # check for wins row, column and diagonals
@@ -102,7 +128,7 @@ def setup_game():
     if mode == '1':
         opponent_type = 'human'
         difficulty = None
-    elif mode == 2:
+    elif mode =='2':
         opponent_type = 'computer'
         difficulty_choice =input('Choose the level of computer difficulty:\n1. Easy\n2. Medium\n3. Hard\n>')
         if difficulty_choice == '1':
@@ -122,17 +148,16 @@ def setup_game():
     return opponent_type, difficulty, 
 
 
-def play_game():
+def play_game(opponent_type,difficulty):
     board = np.zeros((3,3), dtype = int)
     current_player = 1
 
     while True:
-        
-        get_player_move(current_player, board)
-        get_computer_move(currenT_player, board)
-        current_player = -current_player
         print_board(board)
-
+        if opponent_type == 'computer' and current_player == -1:
+            get_computer_moves(board, difficulty)
+        else:
+            get_player_move(current_player, board)
     
         # check for wins
         result = check_winner(board)
@@ -145,6 +170,7 @@ def play_game():
         elif result == 'draw':
             print('It is a draw')
             break
+        current_player = -current_player
 
-        
-play_game()
+opponent_type, difficulty = setup_game()
+play_game(opponent_type, difficulty)
