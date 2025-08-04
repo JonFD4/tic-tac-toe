@@ -99,26 +99,30 @@ def evaluate_score(result, player):
     elif result == 'draw' or result is None:
         return 0
 
-def minimaxing(board,depth, is_maximizing, player):
+def minimaxing(board, depth, is_maximizing, computer_player):
     result = check_winner(board)
     
     if result is not None:
-        return evaluate_score(result, player)
+        current_score = evaluate_score(result, computer_player)
+        if current_score == 1:
+            return current_score - depth
+        elif current_score == -1:
+            return current_score + depth
+        else:
+             return 0
     
     empty_cells = get_empty_cells(board)
     if is_maximizing:
         best_score = float('-inf')
-    elif is_maximizing == False:
+        current_player = computer_player
+    else:
         best_score = float('inf')
+        current_player = -computer_player
 
     for row,col in empty_cells:
         temp_board = board.copy()
-        if is_maximizing:
-            temp_board[row, col] = player  # computer's move
-        else:
-            temp_board[row, col] = -player # player's move
-        
-        score= minimaxing(temp_board, depth+1, not is_maximizing, player)
+        temp_board[row, col] = current_player
+        score = minimaxing(temp_board, depth + 1, not is_maximizing, computer_player)
 
         if is_maximizing:
             best_score = max(best_score, score)
@@ -174,6 +178,12 @@ def get_computer_moves(board,difficulty):
 
         if best_move:
             board[best_move[0], best_move[1]] = -1
+            print(f"Computer (Hard) placed O at ({best_move[0]}, {best_move[1]})")
+        else:
+            # fallback if no move found (should not happen)
+            row, col = random.choice(empty_cells)
+            board[row, col] = -1
+            print(f"Computer (Hard fallback) placed O at ({row}, {col})")
 
 def setup_game():
     mode = input('Who would you like to play against?\n1. Human\n2. Computer\n>')
