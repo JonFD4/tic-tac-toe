@@ -51,40 +51,6 @@ def get_empty_cells(board):
                 empty_cells.append((row,col))
     return empty_cells
 
-def get_computer_moves(board,difficulty):
-    empty_cells = get_empty_cells(board)
-    if difficulty == 'easy':
-        row,col = random.choice(empty_cells)
-        board[row,col]= -1
-        print(f"Computer (Easy) placed O at ({row}, {col})")
-        return
-
-    elif difficulty == 'medium':
-        # Try to win
-        for row,col in empty_cells:
-            dp_board = board.copy() 
-            dp_board[row,col] = -1
-            if check_winner(dp_board) == -1:
-                board[row,col] = -1
-                print(f"Computer placed O at ({row}, {col})")
-                return 
-        #Try to block
-        for row,col in empty_cells:
-                dp_board = board.copy() 
-                dp_board[row,col] = 1
-                if check_winner(dp_board) == 1:
-                    board[row,col] = -1
-                    print(f"Computer placed O at ({row}, {col})")
-                    return 
-       
-        #Fall back
-        row, col = random.choice(empty_cells)
-        board[row,col]= -1
-        print(f"Computer placed O at ({row}, {col})")
-        return
-    
-
-
 # check for wins row, column and diagonals
 
 def check_winner(board):
@@ -125,6 +91,89 @@ def check_winner(board):
 
     return None
 
+def evaluate_score(result, player):
+    if result == player:
+        return +1
+    elif result == -player:
+        return -1
+    elif result == 'draw' or result is None:
+        return 0
+
+def minimaxing(board,depth, is_maximizing, player):
+    result = check_winner(board)
+    
+    if result is not None:
+        return evaluate_score(result, player)
+    
+    empty_cells = get_empty_cells(board)
+    if is_maximizing:
+        best_score = float('-inf')
+    elif is_maximizing == False:
+        best_score = float('inf')
+
+    for row,col in empty_cells:
+        temp_board = board.copy()
+        if is_maximizing:
+            temp_board[row, col] = player  # computer's move
+        else:
+            temp_board[row, col] = -player # player's move
+        
+        score= minimaxing(temp_board, depth+1, not is_maximizing, player)
+
+        if is_maximizing:
+            best_score = max(best_score, score)
+        else:
+            best_score = min(best_score, score)
+
+    return best_score
+
+
+
+def get_computer_moves(board,difficulty):
+    empty_cells = get_empty_cells(board)
+    if difficulty == 'easy':
+        row,col = random.choice(empty_cells)
+        board[row,col]= -1
+        print(f"Computer (Easy) placed O at ({row}, {col})")
+        return
+
+    elif difficulty == 'medium':
+        # Try to win
+        for row,col in empty_cells:
+            dp_board = board.copy() 
+            dp_board[row,col] = -1
+            if check_winner(dp_board) == -1:
+                board[row,col] = -1
+                print(f"Computer placed O at ({row}, {col})")
+                return 
+        #Try to block
+        for row,col in empty_cells:
+                dp_board = board.copy() 
+                dp_board[row,col] = 1
+                if check_winner(dp_board) == 1:
+                    board[row,col] = -1
+                    print(f"Computer placed O at ({row}, {col})")
+                    return 
+       
+        #Fall back
+        row, col = random.choice(empty_cells)
+        board[row,col]= -1
+        print(f"Computer placed O at ({row}, {col})")
+        return
+    elif difficulty == 'hard':
+        best_score = float('-inf')
+        best_move= None
+        for row,col in empty_cells:
+            dp_board = board.copy() 
+            dp_board[row,col] = -1
+            score= minimaxing(dp_board, 0, False, -1) # Call minimax for opponent's turn (minimizing)
+
+            if score > best_score:
+                best_score = score
+                best_move = (row,col)
+
+        if best_move:
+            board[best_move[0], best_move[1]] = -1
 
 def setup_game():
     mode = input('Who would you like to play against?\n1. Human\n2. Computer\n>')
